@@ -1,17 +1,19 @@
 import express from 'express';
 import dotenv from 'dotenv'
 import dbConnect from './config/dbConnection';
+import userRouter from './routes/userRouter'
+import cors from 'cors'
+const app = express()
 
 dotenv.config()
 dbConnect()
-const app = express()
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 const port = process.env.PORT || 4000
 
-app.get('/',(req,res)=>{
-    res.send('helloo ')
-})
+app.use('/',userRouter)
 
 app.listen(port,()=>{
-    console.log(`server running on ${port}`);
-    
+    console.log(`server running on ${port}`); 
 })

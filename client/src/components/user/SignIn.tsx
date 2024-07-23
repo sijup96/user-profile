@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useRef, useState } from "react"
 import React from 'react';
-import { Link } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { setCredentials } from "../../utils/userSlice";
 import validate from "../../utils/validate";
@@ -9,7 +8,7 @@ import validate from "../../utils/validate";
 const SignIn = () => {
   const [isSignInForm, setIsSignInForm] = useState(false)
   const passwordRef = useRef<HTMLInputElement>(null)
-  const [error, setError] = useState<string[]>([])
+  const [errors, setErrors] = useState<string[]>([])
   const dispatch = useDispatch()
   const [data, setData] = useState({
     name: '',
@@ -23,27 +22,27 @@ const SignIn = () => {
   // Confirm password
   const handleConfirmPassword = () => {
     if (data.password !== passwordRef.current?.value)
-      setError(prevErrors => [...prevErrors, 'confirmPasswordError']);
+      setErrors(prevErrors => [...prevErrors, 'confirmPasswordError']);
     else
-    setError(errors=>errors.filter(e=>e!=='confirmPasswordError'))
+      setErrors(errors => errors.filter(e => e !== 'confirmPasswordError'))
   }
   // Submit form
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (!validate({ data, setError })) return
-      const url = 'http://localhost:3000/api/auth'
-      const { data: res } = await axios.post(url, data)
-      localStorage.setItem('token', res.data)
-      dispatch(setCredentials(res))
-      res.isAdmin ?
-        window.location.href = '/admin' : window.location.href = '/'
-    } catch (error: any) {
-      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-        setError(error.response.data.message)
-      }
-    }
+      if (!validate({ data, setErrors })) return
+      const url = 'http://localhost:3000/signUp'
+      const response = await axios.post(url, data)
+      dispatch(setCredentials(response.data))
 
+    } catch (error: any) {
+      if (error.response && error.response.status >= 400 && error.response.status <= 500) {        
+        if(error.response.status ===401)
+          setErrors(error.response.data.errors)
+        else
+        setErrors([error.response.data.message])
+      }
+    }    
   }
   return (
     <>
@@ -55,10 +54,9 @@ const SignIn = () => {
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
+            {isSignInForm ? "Sign in to your account" : "Create an account"}
           </h2>
         </div>
-
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form method="POST" className="space-y-6" onSubmit={handleSubmit}>
             {
@@ -80,7 +78,7 @@ const SignIn = () => {
                     />
                   </div>
                   {
-                    error.includes('nameError') && (<p className="text-red-700 text-sm pl-2">Enter a valid name.</p>)
+                    errors.includes('nameError') && (<p className="text-red-700 text-sm pl-2">Enter a valid name.</p>)
                   }
                 </div>
               )
@@ -102,7 +100,10 @@ const SignIn = () => {
                 />
               </div>
               {
-                error.includes('emailError') && (<p className="text-red-700 text-sm pl-2">Enter a valid email..</p>)
+                errors.includes('emailError') && (<p className="text-red-700 text-sm pl-2">Enter a valid email..</p>)
+              }
+              {
+                errors.includes('existingUser') && (<p className="text-red-700 pl-2 text-sm">Email already exist..</p>)
               }
             </div>
 
@@ -130,7 +131,7 @@ const SignIn = () => {
                 />
               </div>
               {
-                error.includes('passwordError') && (<p className="text-red-700 text-sm pl-2">Password must be between 8 and 15 characters long and include at least one digit, one lowercase letter, one uppercase letter, and one special character.</p>)
+                errors.includes('passwordError') && (<p className="text-red-700 text-sm pl-2">Password must be between 8 and 15 characters long and include at least one digit, one lowercase letter, one uppercase letter, and one special character.</p>)
               }
             </div>
             {
@@ -143,7 +144,7 @@ const SignIn = () => {
                   </div>
                   <div className="mt-2">
                     <input
-                      id="password"
+                      id="confirmPassword"
                       type="password"
                       ref={passwordRef}
                       autoComplete="current-password"
@@ -153,7 +154,7 @@ const SignIn = () => {
                     />
                   </div>
                   {
-                    error.includes('confirmPasswordError') && (<p className="text-red-700 text-sm pl-2">Password does not match</p>)
+                    errors.includes('confirmPasswordError') && (<p className="text-red-700 text-sm pl-2">Password does not match</p>)
                   }
                 </div>
               )
@@ -164,7 +165,7 @@ const SignIn = () => {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                {isSignInForm ? 'signIn' : 'signUp'}
               </button>
             </div>
           </form>
