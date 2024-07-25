@@ -5,8 +5,11 @@ interface UserTypes extends Document {
     name: string;
     email: string;
     password: string;
+    image?:string;
+    refreshToken?: string;
     createdAt: Date;
     updatedAt: Date;
+    comparePassword: (enteredPassword: string) => Promise<boolean>;
 }
 
 const UserSchema: Schema = new Schema({
@@ -18,6 +21,9 @@ const UserSchema: Schema = new Schema({
         type: String,
         trim: true,
         lowercase: true,
+    },
+    image: {
+        type: String
     },
     password: {
         type: String
@@ -45,7 +51,7 @@ UserSchema.pre<UserTypes>('save', async function (next) {
     }
 });
 // Compare Password
-UserSchema.methods.comparePassword = function (enteredPassword: string) {
+UserSchema.methods.comparePassword = async function (enteredPassword: string) {
     return bcrypt.compare(enteredPassword, this.password);
 };
 

@@ -1,20 +1,29 @@
 import axios from "axios";
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from "../../utils/userSlice";
 import validate from "../../utils/validate";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../../utils/appStore";
 
 const SignIn = () => {
-  const [isSignInForm, setIsSignInForm] = useState(false)
+  const navigate=useNavigate()
+  const [isSignInForm, setIsSignInForm] = useState(true)
   const passwordRef = useRef<HTMLInputElement>(null)
   const [errors, setErrors] = useState<string[]>([])
   const dispatch = useDispatch()
+  const {userInfo}=useSelector((state:RootState)=>state.user)
   const [data, setData] = useState({
     name: '',
     email: "",
     password: "",
   })
+  useEffect(()=>{
+    console.log("signIn",userInfo);
+    if(userInfo)
+      navigate('/')
+  },[])
   // set data
   const handleChange = ({ currentTarget: input }: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [input.name]: input.value })
@@ -30,19 +39,37 @@ const SignIn = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (!validate({ data, setErrors })) return
-      const url = 'http://localhost:3000/signUp'
-      const response = await axios.post(url, data)
-      dispatch(setCredentials(response.data))
+      if (isSignInForm) {
+        const url = 'http://localhost:3000/signIn'
+        const response = await axios.post(url, data,{withCredentials:true})
+        if(response.data.success){
+        dispatch(setCredentials(response.data.data))
+         navigate('/')
+        }
+      } else {
+        if (!validate({ data, setErrors })){
+          if(passwordRef.current?.value===""){
+            setErrors((prevError)=>[...prevError,'confirmPasswordError'])
+          }
+          return
+        }
+        const url = 'http://localhost:3000/signUp'
+        const response = await axios.post(url, data)
+        dispatch(setCredentials(response.data))
+        navigate('/')
+      }
 
     } catch (error: any) {
-      if (error.response && error.response.status >= 400 && error.response.status <= 500) {        
-        if(error.response.status ===401)
+      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+        if (error.response.status === 401) {
           setErrors(error.response.data.errors)
-        else
-        setErrors([error.response.data.message])
+        } else if (error.response.status === 404) {
+          setErrors([error.response.data.message])
+        } else {
+          setErrors([error.response.data.message])
+        }
       }
-    }    
+    }
   }
   return (
     <>
@@ -133,6 +160,9 @@ const SignIn = () => {
               {
                 errors.includes('passwordError') && (<p className="text-red-700 text-sm pl-2">Password must be between 8 and 15 characters long and include at least one digit, one lowercase letter, one uppercase letter, and one special character.</p>)
               }
+              {
+                errors.includes('noUserFound') && (<p className="text-red-700 text-sm pl-2 text-center">invalid credentials..</p>)
+              }
             </div>
             {
               !isSignInForm && (
@@ -173,13 +203,13 @@ const SignIn = () => {
             isSignInForm ? (<p className="mt-10 text-center text-sm text-gray-500">
               Not a member ?{' '}
               <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 cursor-pointer"
-                onClick={() => { setIsSignInForm(!isSignInForm) }}>
+                onClick={() => { setIsSignInForm(!isSignInForm), setErrors([])}}>
                 signUp
               </span>
             </p>) : <p className="mt-10 text-center text-sm text-gray-500">
               Already have an account ?{' '}
               <span className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 cursor-pointer"
-                onClick={() => { setIsSignInForm(!isSignInForm) }}>
+                onClick={() => { setIsSignInForm(!isSignInForm), setErrors([]) }}>
                 signIn
               </span>
             </p>

@@ -1,31 +1,37 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 
- interface UserInfo {
+export interface UserInfo {
     name: string;
     email: string;
+    _id: string;
     image: string;
+    token: string;
 
 }
 export interface UserState {
-    userInfo: UserInfo | null
+    userInfo: UserInfo | null;
 }
-const initialState: UserState = { userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')!) : null }
+const initialState: UserState = { userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo') as string) : null }
 
 const userSlice = createSlice({
-    name: 'User',
+    name: 'user',
     initialState,
     reducers: {
-        setCredentials: (state, action) => {                        
-            state.userInfo = action.payload
-            localStorage.setItem('userInfo', JSON.stringify(action.payload))
+        setCredentials: (state, action) => {
+            const userInfo = action.payload;
+            localStorage.setItem('userInfo', JSON.stringify(userInfo))
+            state.userInfo = userInfo
+            return
         },
-        logout: (state) => {
-            state.userInfo = null
+        clearCredentials: (state) => {
+            console.log('hiii', state);
             localStorage.removeItem('userInfo')
+            state.userInfo = null
+            return
         }
     }
 
 })
-export const { setCredentials, logout } = userSlice.actions;
+export const { setCredentials, clearCredentials } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,6 +1,6 @@
 
 const nameRegex = /^[a-zA-Z ]{2,30}$/
-const emailRegex = /^[^\s@]+@(?!.*\.[^\s@]+)[a-zA-Z\d-]+\.(com|org|in|net|edu|gov|co|uk)$/
+const emailRegex =/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_+=])[A-Za-z\d!@#$%^&*()-_+=]{8,}$/
 
 interface ValidateUserProps {
