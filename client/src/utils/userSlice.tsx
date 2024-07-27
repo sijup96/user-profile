@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 export interface UserInfo {
     name: string;
     email: string;
@@ -25,7 +24,6 @@ const userSlice = createSlice({
             return
         },
         clearCredentials: (state) => {
-            console.log('hiii', state);
             localStorage.removeItem('userInfo')
             state.userInfo = null
             return

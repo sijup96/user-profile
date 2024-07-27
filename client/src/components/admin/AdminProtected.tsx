@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 
 const AdminProtected = () => {
     const {adminInfo}=useSelector((state:RootState)=>state.admin)
-    return adminInfo?<Outlet/>:<Navigate to={'/adminLogin'} replace/>
+    return adminInfo?<Outlet/>:<Navigate to={'/admin-login'} replace/>
 }
 
 export default AdminProtected

@@ -7,14 +7,12 @@ import { clearCredentials } from '../../utils/userSlice';
 const Header = () => {
   const dispatch = useDispatch()
   const { userInfo } = useSelector((state: RootState) => state.user)
-  const { adminInfo } = useSelector((state: RootState) => state.admin)
   const navigate = useNavigate()
   
   const handleLogout = async () => {
     try {
       const url = 'http://localhost:3000/logout'
       const response = await axios.post(url, { token: userInfo?.token })
-      console.log('jkhdsjf', response.data);
       if (response.data.status) {
 
         dispatch(clearCredentials());
@@ -26,9 +24,6 @@ const Header = () => {
 
     }
   }
-  const adminLogout = () => {
-
-  }
 
   return (
     <>
@@ -38,10 +33,6 @@ const Header = () => {
         {(userInfo && <div className='mr-10 space-x-3 w-1/2 flex items-center justify-end'>
           <button onClick={handleLogout} className='rounded-md p-2 bg-indigo-600' >Logout</button>
         </div>)}
-        {(adminInfo &&
-          <button onClick={adminLogout} className='rounded-md p-2 bg-indigo-600 absolute right-20 bottom-3' > Logout</button>)
-          || (!userInfo && <Link to={"/admin-login"} className='rounded-md p-2 bg-indigo-600 absolute right-20 bottom-3' > Admin Login</Link>)
-        }
 
       </div>
     </>

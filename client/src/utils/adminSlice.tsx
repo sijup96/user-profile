@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface AdminInfo {
     email: string;
+    token:string;
 }
 export interface AdminState {
     adminInfo: AdminInfo | null

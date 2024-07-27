@@ -133,3 +133,12 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
         res.status(500).json({ message: "server error" })
     }
 })
+export const userExist=asyncHandler(async(req,res)=>{
+const {token}=req.body.data
+const user=await User.findOne({refreshToken:token})
+if(!user){
+    res.json({status:false})
+    return
+}
+return
+})

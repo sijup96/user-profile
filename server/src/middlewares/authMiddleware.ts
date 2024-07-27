@@ -29,3 +29,12 @@ export const userMiddleware = asyncHandler(async (req, res,next) => {
         return
     }
 })
+
+export const isAdmin=asyncHandler(async(req,res,next)=>{
+    try {
+        const refreshToken=req.body.token
+        
+    } catch (error) {
+        
+    }
+})
