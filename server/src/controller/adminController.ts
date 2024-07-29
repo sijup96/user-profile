@@ -59,3 +59,16 @@ export const deleteUser = asyncHandler(async (req, res) => {
         res.status(500).json({ message: 'server error' })
     }
 })
+export const getUser=asyncHandler(async(req,res)=>{
+    try {
+        const userId=req.params.id
+        const user=await User.findById(userId).select('-password')
+        if(!user){
+            res.status(404).json({message:"user not found"})
+            return
+        }
+        res.status(200).json({user})
+    } catch (error) {
+        
+    }
+})

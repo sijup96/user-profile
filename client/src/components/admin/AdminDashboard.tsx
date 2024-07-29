@@ -97,7 +97,7 @@ const AdminDashboard: React.FC = () => {
                         Block
                       </button>
                     )} */}
-                    <Link to={`/admin/get-update-user/${user._id}`}>
+                    <Link to={`/updateUser/${user._id}`}>
                       <button className="bg-blue-500 text-white py-2 px-4 rounded-lg mx-2">Update</button>
                     </Link>
                     <button

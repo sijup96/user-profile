@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import { clearCredentials } from './utils/userSlice'
 import { useEffect } from 'react'
+import UpdateUser from './components/admin/UpdateUser'
 function App() {
   const userData = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo') as string) : null
   const dispatch = useDispatch()
@@ -34,6 +35,7 @@ function App() {
       <Route path='/admin-Login' element={<Login />} />
       <Route element={<AdminProtected />}>
         <Route path='/admin' element={<AdminDashboard />} />
+        <Route path='/updateUser/:userId' element={<UpdateUser/>}/>
       </Route>
       <Route element={<Protected />}>
         <Route path='/profile' element={<ProfileUpdate />} />

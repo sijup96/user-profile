@@ -6,36 +6,36 @@ import { addAdmin } from '../../utils/adminSlice'
 import { RootState } from '../../utils/appStore';
 
 const Login = () => {
-    const [errors,setErrors]=useState<string[]>([])
-    const email=useRef<HTMLInputElement>(null)
-    const password=useRef<HTMLInputElement>(null)
-    const navigate=useNavigate()
-    const dispatch=useDispatch()
-    const {adminInfo}=useSelector((state:RootState)=>state.admin)
-    useEffect(()=>{
-      if(adminInfo)
-        navigate('/admin')
-    },[])
+  const [errors, setErrors] = useState<string[]>([])
+  const email = useRef<HTMLInputElement>(null)
+  const password = useRef<HTMLInputElement>(null)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { adminInfo } = useSelector((state: RootState) => state.admin)
+  useEffect(() => {
+    if (adminInfo)
+      navigate('/admin')
+  }, [])
 
-    const handleSubmit=async(e: React.FormEvent<HTMLFormElement>)=>{
-      e.preventDefault()
-      try{
-      const url='http://localhost:3000/admin/signIn';
-      const data={
-        email:email.current?.value,
-        password:password.current?.value
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      const url = 'http://localhost:3000/admin/signIn';
+      const data = {
+        email: email.current?.value,
+        password: password.current?.value
       }
-      const response=await axios.post(url,data,{withCredentials:true})
-      if(response.data.success){
+      const response = await axios.post(url, data, { withCredentials: true })
+      if (response.data.success) {
         console.log(response.data);
-        
+
         dispatch(addAdmin(response.data.data))
         navigate('/admin')
       }
-    }catch(error){
+    } catch (error) {
 
     }
-    }
+  }
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
