@@ -29,7 +29,7 @@ const ProfileUpdate = () => {
     if (!validate({ data, setErrors })) return
     const url = 'http://localhost:3000/profile-update'
     try {
-      const response = await axios.post(url, { name, email, password, userImage, token: userInfo?.token })
+      const response = await axios.post(url, { name, email, password, userImage, token: userInfo?.token},{withCredentials:true})
       if (response.data.success) {
         dispatch(setCredentials(response.data.data))
         navigate('/')

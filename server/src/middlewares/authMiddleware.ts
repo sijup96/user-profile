@@ -5,6 +5,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export const userMiddleware = asyncHandler(async (req, res,next) => {
     try {
+        const refreshToken=req.cookies.refreshToken
+        
         const { token } = req.body
         if (!token) {
             res.status(404).json({ message: "Token not found" })

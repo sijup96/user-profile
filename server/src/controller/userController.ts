@@ -48,6 +48,7 @@ export const signIn = asyncHandler(async (req: Request, res: Response) => {
                 sameSite: 'lax',
                 secure: false
             });
+            
             const data = {
                 email: user.email,
                 name: user.name,
@@ -141,4 +142,9 @@ if(!user){
     return
 }
 return
+})
+export const getUser=asyncHandler(async(req,res)=>{
+    const token =req.cookies.refreshToken
+    console.log(token);
+    
 })

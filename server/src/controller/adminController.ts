@@ -59,16 +59,50 @@ export const deleteUser = asyncHandler(async (req, res) => {
         res.status(500).json({ message: 'server error' })
     }
 })
-export const getUser=asyncHandler(async(req,res)=>{
+export const getUser = asyncHandler(async (req, res) => {
     try {
-        const userId=req.params.id
-        const user=await User.findById(userId).select('-password')
-        if(!user){
-            res.status(404).json({message:"user not found"})
+        const userId = req.params.id
+        const user = await User.findById(userId).select('-password')
+        if (!user) {
+            res.status(404).json({ message: "user not found" })
             return
         }
-        res.status(200).json({user})
+        res.status(200).json({ user })
     } catch (error) {
-        
+
     }
+})
+export const profileUpdate = asyncHandler(async (req, res) => {
+try {
+    const userId = req.params.id
+    const { name, image } = req.body    
+    if (image) {
+        // Upload an image
+        const uploadResult = await cloudinary.uploader
+            .upload(image, {
+                upload_preset: 'gc9hq05h',
+                public_id: `${name}avatar`,
+                allowed_formats: ['png', "jpg", "jpeg", 'svg', 'ico', 'jfif', 'webp']
+            },
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+
+        const updatedUser = await User.findByIdAndUpdate(userId, { name, image: uploadResult?.url })
+        if (!updatedUser) {
+            res.status(400).json({ message: "user not updated" })
+            return
+        }
+    }else{
+        const updatedUser = await User.findByIdAndUpdate(userId, { name })
+        if (!updatedUser) {
+            res.status(400).json({ message: "user not updated" })
+            return
+        }
+    }
+    res.status(200).json(({success:true}))
+} catch (error) {
+    res.json(500)
+}
 })

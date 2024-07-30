@@ -13,9 +13,12 @@ import axios from 'axios'
 import { clearCredentials } from './utils/userSlice'
 import { useEffect } from 'react'
 import UpdateUser from './components/admin/UpdateUser'
+import useGetUserData from './hooks/useGetUserData'
 function App() {
   const userData = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo') as string) : null
   const dispatch = useDispatch()
+  useGetUserData()
+
   const fetchUser = async () => {
     const data = {
       token: userData?.token
